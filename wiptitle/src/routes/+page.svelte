@@ -3,6 +3,17 @@
 <body>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="https://apis.google.com/js/api.js"></script>
+
+
+    <div class="sign-in-wrapper">
+        <div class="sign-in-content">
+                <div>
+                    <button class="btn-auth"    type="submit">
+                    <img class="btn-auth-img" src='/google_signin_buttons/web/1x/ btn_google_signin_dark_pressed_web.png' alt='google sign in'/>
+                    </button>
+                </div>
+        </div>
+    </div>
 </body>
  
 <style>

@@ -32,6 +32,7 @@
 	"type": "module",
 	"dependencies": {
 		"@googleapis/youtube": "^13.0.0",
+		"google-auth-library": "^9.4.1",
 		"googleapis": "^129.0.0"
 	}
 }
