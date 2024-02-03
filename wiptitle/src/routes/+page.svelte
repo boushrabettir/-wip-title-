@@ -1,3 +1,12 @@
+<script>
+    import { fetchYoutubeData } from "$lib/youtube";
+	import { onMount } from "svelte";
+    onMount(async() => {
+        let results = await fetchYoutubeData();
+        console.log(results);
+    });
+</script>
+
 <h1>WIP CONVERTER</h1>
 <body>
 </body>
