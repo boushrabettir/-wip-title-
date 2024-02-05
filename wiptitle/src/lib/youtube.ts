@@ -1,4 +1,5 @@
 import { google } from 'googleapis';
+import { OAuth2Client } from 'google-auth-library';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -16,15 +17,14 @@ const check_envs = () => {
 const instaniate_connection = () => {
     const res = check_envs();
     if (res){
-        const oauth2Client = new google.auth.OAuth2(
+        const client = new OAuth2Client(
             res["CLIENT_ID"],
-            res["CLIENT_SECRET"]
+            res["CLIENT_ID"]
         );
-    
-        if (oauth2Client) {
+        if (client) {
             return google.youtube({
                 version: 'v3',
-                auth: oauth2Client
+                auth: client
             });
         }
     }
@@ -36,13 +36,15 @@ export async function fetchYoutubeData(): Promise<any> {
     let connection = instaniate_connection();
     if (connection){
         try{
-            const res = await connection.playlists.list({
+            const {data} = await connection.playlists.list({
+                key:"AIzaSyAn11Ne-zT0CnV5Qa_5_iVdQtCqQRfyTgw",
                 channelId:'UC8Z9bpoFO2qTwE90ODhZQ9A'
             });
-            if (res) {
-                console.log(res.data);
+            
+            if (data) {
+                console.log(data);
             } 
-            return res;
+            return data;
         } catch(error){
             console.log('We got an error');
         }
