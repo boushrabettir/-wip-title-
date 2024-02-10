@@ -1,16 +1,18 @@
-<script>
-    import { fetchYoutubeData } from "$lib/youtube";
-	import { onMount } from "svelte";
-    onMount(async() => {
-        let results = await fetchYoutubeData();
-        console.log(results);
+<h1>WIP CONVERTER</h1>
+
+
+<script lang="ts">
+    import { onMount } from 'svelte';
+    import { runSample } from '../api/youtube';
+
+    onMount(() => {
+        console.log('Hello!');
+        runSample();
     });
 </script>
 
-<h1>WIP CONVERTER</h1>
-<body>
-</body> 
- 
+
+
 <style>
 h1
     {
@@ -20,10 +22,4 @@ h1
     font-style: normal;
     font-size: 2em;
     }
-body
-{
-    background-color: #9B9FB5;
-    margin: 0 auto;
-    padding: 1em;
-}
 </style>
