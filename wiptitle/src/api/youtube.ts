@@ -1,39 +1,70 @@
+import * as dotenv from 'dotenv';
 
-import { google } from 'googleapis';
-import path from 'path';
-import { authenticate } from '@google-cloud/local-auth';
+dotenv.config()
 
-// initialize the Youtube API library
-const youtube = google.youtube('v3');
-
-export async function runSample() {
-  const auth = await authenticate({
-    keyfilePath: path.join(__dirname, '../client_secret.json'),
-    scopes: ['https://www.googleapis.com/auth/youtube'],
+function initGapi(apiKey: string, clientId: string, discoveryDocs: string[], scopes: string[]) {
+  return new Promise<void>((resolve, reject) => {
+      gapi.load('client:auth2', async () => {
+          try {
+              await gapi.client.init({
+                  apiKey,
+                  clientId,
+                  discoveryDocs,
+                  scope: scopes.join(' ')
+              });
+              resolve();
+          } catch (error) {
+              reject(error);
+          }
+      });
   });
-  google.options({auth});
-
-  // the first query will return data with an etag
-  const res = await getPlaylistData(null);
-  const etag = res.data.etag;
-  console.log(`etag: ${etag}`);
-
-  // the second query will (likely) return no data, and an HTTP 304
-  // since the If-None-Match header was set with a matching eTag
-  const res2 = await getPlaylistData(etag ?? null);
-  console.log(res2.status);
 }
 
-async function getPlaylistData(etag: string | null) {
-  // Create custom HTTP headers for the request to enable use of eTags
-  const headers: Record<string, string> = {};
-  if (etag) {
-    headers['If-None-Match'] = etag;
+
+async function getUserPlaylists() {
+  try {
+      // Ensure gapi is initialized
+      if (!gapi.auth2.getAuthInstance()) {
+          throw new Error('gapi is not initialized. Call initGapi() first.');
+      }
+
+      // Authenticate the user
+      const user = gapi.auth2.getAuthInstance().currentUser.get();
+      if (!user.isSignedIn()) {
+          throw new Error('User is not signed in.');
+      }
+
+      // Fetch playlists
+      const response = await gapi.client.youtube.playlists.list({
+          part: 'snippet',
+          mine: true
+      });
+
+      // Extract playlist information
+      const playlists = response.result.items.map((playlist: any) => ({
+          id: playlist.id,
+          title: playlist.snippet.title
+      }));
+
+      return playlists;
+  } catch (error) {
+      console.error('Error fetching playlists:', error);
+      throw error;
   }
-  const res = await youtube.playlists.list({
-    channelId: 'UC8Z9bpoFO2qTwE90ODhZQ9A',
-  });
-  console.log('Status code: ' + res.status);
-  console.log(res.data);
-  return res;
 }
+
+export async function main() {
+  try {
+      // Initialize gapi
+      await initGapi('', '', ['https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest'], ['https://www.googleapis.com/auth/youtube.readonly']);
+
+      // Fetch and log user's playlists
+      const playlists = await getUserPlaylists();
+      console.log('User Playlists:', playlists);
+  } catch (error) {
+      console.error('Error:', error);
+  }
+}
+
+
+main();

@@ -3,13 +3,28 @@
 
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { runSample } from '../api/youtube';
-
-    onMount(() => {
-        console.log('Hello!');
-        runSample();
+    import { main } from '../api/youtube';
+  
+    // Load Google API client library
+    const loadGoogleApi = () => {
+      return new Promise<void>((resolve) => {
+        const script = document.createElement('script');
+        script.src = 'https://apis.google.com/js/api.js';
+        script.onload = () => resolve(); // Specify the type of onload callback
+        document.body.appendChild(script);
+      });
+    };
+  
+    onMount(async () => {
+      console.log('Loading Google API...');
+      await loadGoogleApi();
+      console.log('Google API loaded.');
+      
+      // Initialize and use Google API
+      await main();
     });
-</script>
+  </script>
+  
 
 
 
@@ -22,4 +37,5 @@ h1
     font-style: normal;
     font-size: 2em;
     }
+
 </style>
