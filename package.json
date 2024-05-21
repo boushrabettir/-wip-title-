@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "@types/gapi": "^0.0.47"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
   }
 }
